@@ -24,16 +24,22 @@ class NoteListAdapter(
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        return NoteViewHolder.create(parent)
+        return NoteViewHolder(LayoutInflater.from(parent.context)
+            .inflate(R.layout.recyclerview_item,parent,false)).apply {
+                itemView.setOnClickListener{
+                    this@NoteListAdapter.notesListener?.onNoteClicked(getItem(adapterPosition),adapterPosition)
+                }
+            itemView.setOnLongClickListener{
+                this@NoteListAdapter.notesListener?.onNoteClickedLong(getItem(adapterPosition),adapterPosition)
+                return@setOnLongClickListener true
+            }
+        }
+
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val current = getItem(position)
         holder.bind(current.title,current.subtitle,current.dataTime,current.color,current.imagePath)
-        holder.layoutRecyclerView.setOnClickListener{
-            notesListener.onNoteClicked(getItem(position),position)
-
-        }
 
     }
 
@@ -43,17 +49,18 @@ class NoteListAdapter(
         private val noteDataText : TextView = itemView.findViewById(R.id.textDataTime)
         private val imageNote : ImageView = itemView.findViewById(R.id.imageNotePreview)
         val layoutRecyclerView :LinearLayout = itemView.findViewById(R.id.layoutNote)
+
         fun bind(textTitle : String?, textSubtitle :String?,textDataTime : String?,textNoteColor :String?,imagePath: String?){
             noteItemView.text = textTitle
             noteSubtitle.text = textSubtitle
             noteDataText.text = textDataTime
-            Log.d("aaaaa",imagePath + "nam")
             if (imagePath == "") imageNote.visibility = View.GONE
             else {
                 imageNote.setImageBitmap(BitmapFactory.decodeFile(imagePath))
                 imageNote.visibility = View.VISIBLE
 
             }
+
             val gradientDrawable = layoutRecyclerView.background as GradientDrawable
             if (textNoteColor == "") gradientDrawable.setColor(Color.parseColor("#333333"))
             else gradientDrawable.setColor(Color.parseColor(textNoteColor))

@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.PhamNam.notesApp.adapter.NoteListAdapter
 import com.PhamNam.notesApp.adapter.NoteViewModel
@@ -77,5 +78,22 @@ class MainActivity : AppCompatActivity(), NotesListener {
         intent.putExtra("note", note)
         startActivityForResult(intent, REQUEST_CODE_UPDATE_NOTE)
     }
+
+    override fun onNoteClickedLong(note: Note, position: Int) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Confirm delete note")
+        builder.setMessage("Are you sure?")
+        builder.setPositiveButton(android.R.string.yes) { _, _ ->
+           note?.let { noteViewModel.deleteNote(it) }
+            startActivityForResult(
+                Intent(applicationContext, MainActivity::class.java),
+                CreateNoteActivity.REQUEST_CODE_DELETE_NOTE
+            )
+        }
+        builder.setNegativeButton(android.R.string.no) { _, _ -> }
+
+        builder.show()
+    }
+
 
 }
