@@ -14,6 +14,7 @@ import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
@@ -96,14 +97,12 @@ class CreateNoteActivity : AppCompatActivity() {
             note.imagePath = selectImagePath
 
             if (binding.layoutWebURL.visibility == View.VISIBLE) {
-                note.imagePath = binding.textWebURL.text.toString()
-
+                note.webLink = binding.textWebURL.text.toString()
             }
             if (alreadyAvailableNote != null) note.id = alreadyAvailableNote?.id!!
+            if(binding.layoutWebURL.visibility == View.VISIBLE)
             note.webLink = binding.textWebURL.text.toString()
-
             replyIntent.putExtra("note", note)
-
             setResult(Activity.RESULT_OK, replyIntent)
         }
         finish()
@@ -189,7 +188,6 @@ class CreateNoteActivity : AppCompatActivity() {
         }
         val layoutAddURl: LinearLayout = layoutMiscellaneous.findViewById(R.id.layoutAddURL)
         layoutAddURl.setOnClickListener {
-
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             showAddUrlDialog()
         }
